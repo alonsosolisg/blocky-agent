@@ -42,7 +42,9 @@ export function getOccupiedStuds(piece: PlacedPiece): string[] {
     for (let dz = 0; dz < part.l; dz++) {
       const wx = baseX + (dx * cos - dz * sin)
       const wz = baseZ + (dx * sin + dz * cos)
-      keys.push(`${Math.round(wx)},${baseY},${Math.round(wz)}`)
+      // Standardize heights to fixed 2-decimal strings to prevent tiny float rounding errors 
+      // (e.g. 1.289999999 vs 1.29) from bypassing the collision system and allowing overlapping duplicate blocks.
+      keys.push(`${Math.round(wx)},${baseY.toFixed(2)},${Math.round(wz)}`)
     }
   }
   return keys

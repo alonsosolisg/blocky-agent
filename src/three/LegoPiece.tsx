@@ -37,19 +37,21 @@ function createLegoBrick(w: number, l: number, hPlates: number, color: string, i
 
   // Main body - simple solid box for clean Lego look.
   // Offset so it's centered over the min-corner studs (dx=0 to w-1)
-  // Apply a tiny visual offset (0.998 instead of 1.0) on length/width to prevent z-fighting / flickering 
+  // Apply a tiny visual offset (0.998 instead of 1.0) on length/width/height to prevent z-fighting / flickering 
   // on adjacent brick faces or layered base plates, while keeping standard grid positions.
   const shrinkFactor = 0.998
   const body = new THREE.Mesh(
-    new THREE.BoxGeometry(w * shrinkFactor, height, l * shrinkFactor),
+    new THREE.BoxGeometry(w * shrinkFactor, height * shrinkFactor, l * shrinkFactor),
     mat
   )
   body.position.set( (w-1)*0.5 , height / 2 , (l-1)*0.5 )
   group.add(body)
 
   // Studs on top only. Position relative to min-corner (dx, dz) so 1x pieces align to integer grid studs.
+  // Apply a tiny height reduction to studs (0.16 instead of 0.17) to prevent them from intersecting 
+  // and flickering inside the bottom of any brick placed directly on top of them.
   const studR = 0.28
-  const studH = 0.17
+  const studH = 0.16
   const studGeo = new THREE.CylinderGeometry(studR, studR, studH, 20)
   for (let x = 0; x < w; x++) {
     for (let z = 0; z < l; z++) {
@@ -64,15 +66,17 @@ function createLegoBrick(w: number, l: number, hPlates: number, color: string, i
   }
 
   // Bottom tubes - small, on the bottom face (not looking like top studs)
+  // Shrink the tube height and pull them slightly into the brick cavity
+  // to avoid colliding with any underlying studs or adjacent layers which causes color mixing/flickering.
   const tubeR = 0.13
-  const tubeH = 0.12
+  const tubeH = 0.08
   const tubeGeo = new THREE.CylinderGeometry(tubeR, tubeR, tubeH, 12)
   for (let x = 0; x < w; x++) {
     for (let z = 0; z < l; z++) {
       const tube = new THREE.Mesh(tubeGeo, mat)
       tube.position.set(
         x * 1,
-        -tubeH / 2,
+        -tubeH / 2 + 0.01,
         z * 1
       )
       group.add(tube)
@@ -87,6 +91,8 @@ export const LegoPiece = memo(function LegoPiece({ piece, isGhost = false }: Leg
   const part = getPart(partId)
 
   // Memoize the brick - group is fine for small number, looks clean
+  // Always recreate or update material key to prevent shared THREE.Group mesh primitives 
+  // from sharing identical materials or state in cached renders, preventing color mixing/flickering.
   const brick = useMemo(() => {
     return createLegoBrick(part.w, part.l, part.hPlates, color, isGhost)
   }, [part.w, part.l, part.hPlates, color, isGhost])
@@ -97,7 +103,7 @@ export const LegoPiece = memo(function LegoPiece({ piece, isGhost = false }: Leg
       position={[position[0], position[1], position[2]]}
       rotation={[0, rotationY, 0]}
     >
-      <primitive object={brick} />
+      <primitive object={brick} key={`${piece.id}-${color}-${isGhost}`} />
     </group>
   )
 })

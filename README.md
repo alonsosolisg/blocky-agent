@@ -1,9 +1,9 @@
-# 🧱 Blocky Agent • 3D LEGO-Style Builder
+# <img src="public/favicon.svg" width="32" height="32" align="center" style="vertical-align: middle; margin-right: 8px;" /> Blocky Agent • 3D LEGO-Style Builder
 
 An interactive, keyboard-primary 3D LEGO-style block builder powered by Three.js and React, featuring **Blocky**—an intelligent, autonomous assembly agent integrated with OpenRouter models (like Tencent Hy3, Poolside Laguna, and Gemma).
 
 <p align="center">
-  <img src="src/assets/hero.png" alt="Blocky Agent Interface Preview" width="100%" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  <img src="src/assets/blocky_screenshot.png" alt="Blocky Agent Interface Preview" width="100%" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
 </p>
 
 ## ✨ Features
