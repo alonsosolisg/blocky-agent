@@ -58,7 +58,9 @@ const SYSTEM_PROMPT = `You are Blocky, an expert agentic Lego builder. Your ONLY
 - Stacking/Collision Guideline: Bricks and plates can overlap at corners! Do NOT waste time or slow down thinking trying to calculate non-overlapping corner segments or offset walls. The 3D grid layout is highly forgiving. Focus purely on placing blocks and completing the structure fast.
 - Self-Preservation Guideline: Do NOT call clear_all when starting to build unless the user explicitly commands you to clear the scene! You must preserve all existing user-built models and details (like flowers, castles, houses, etc.) in the sandbox, and build your new creation cleanly next to them or on top of them if told by the user. If you see occupied space, simply adjust your coordinates to build in an empty spot next to them.
 - Simple Shapes rule: Focus purely on simple, rectangular geometry and standard orientations (rotationY=0). Do NOT get bogged down overthinking complex rotation offsets, arm extensions, or perfect modular fitting. Simply place your blocks adjacent on the standard grid and let them snap!
-- You MUST output real tool calls on Turn 1. Never return empty content or claim completion without any pieces.
+- You MUST output real tool calls on Turn 1. Never return empty content or claim completion without any pieces. If you do not emit tool calls immediately on Turn 1, the build will fail.
+- Sub-assembly approach: When building complex multi-piece setups (like a Computer PC setup with tower + monitor + keyboard + mouse), do NOT attempt to over-engineer complex thin vertical panels or micro-detailing on Turn 1. Build the massive components in clean, simple chunks (e.g. stack brick-2x4 for a CPU tower, place plate-2x4 or plate-4x4 flatly as a monitor and keyboard base, and stack standard blocks in simple layout steps).
+- To Revert/Undo: If a user asks you to "revert", "undo", "remove that", "delete the last thing", or similar, do NOT clear the whole board. Instead, call get_build_state first to retrieve the active pieces, inspect their unique IDs, and call the remove_piece tool on those specific pieces to undo them cleanly.
 - The content field of your response should be EMPTY or extremely minimal until the build is 100% finished. Only AFTER all pieces are placed do you output 1 short final sentence (e.g. "Small house is complete!").
 - Output DOZENS of place_piece tool calls across rounds. Put as many as possible (8-20) in each response when building big sections.
 - Always place pieces so they are adjacent and connected. Keep pieces touching and tightly aligned without leaving gaps.
@@ -438,17 +440,21 @@ export default function BlockyPanel() {
     abortControllerRef.current = new AbortController()
 
     // Local array — we only call setMessages a few times per turn instead of inside every loop iteration.
-    // Keep context window compact and highly efficient by keeping only the last 6 messages (L3D-034)
-    // This prevents context-window bloat, avoids model confusion over ancient steps, and saves massive response latency.
-    const maxContextMessages = 6
+    // Keep context window compact and highly efficient by keeping a sliding window based on word/token count (L3D-034)
+    // This dynamically scales context: short conversations remain intact, while heavy logs are trimmed.
+    // We target a conservative budget of ~3000 words (~4000 tokens) of chat history to feed OpenRouter.
     let workingMessages: ChatMessage[] = [...messages, { role: 'user', content: userMessage }]
-    if (workingMessages.length > maxContextMessages) {
-      // Always preserve the very first assistant welcome message
-      workingMessages = [
-        messages[0],
-        ...workingMessages.slice(-maxContextMessages + 1)
-      ]
+    
+    // Estimate word count to trim history cleanly (preserving first assistant welcome message)
+    let totalEstimatedWords = workingMessages.reduce((sum, m) => sum + m.content.split(/\s+/).length, 0)
+    const maxWordBudget = 6000 // A highly balanced budget (~8000 tokens) allows robust multi-turn memory without overthinking latency
+
+    while (totalEstimatedWords > maxWordBudget && workingMessages.length > 2) {
+      // Remove the oldest message right after the welcome message (index 1)
+      workingMessages.splice(1, 1)
+      totalEstimatedWords = workingMessages.reduce((sum, m) => sum + m.content.split(/\s+/).length, 0)
     }
+
     setMessages(workingMessages)
 
     let chatMessages: any[] = [
@@ -465,6 +471,17 @@ export default function BlockyPanel() {
         return base
       })
     ]
+
+    // Crucial: Clear out the huge historical system nudge loops (Turn 1, Turn 2, Turn 3 nudges) 
+    // from the API payload (chatMessages) to prevent the model from seeing repetitive error states and infinite-looping on them!
+    const filteredChatMessages = chatMessages.filter((msg) => {
+      if (msg.role === 'user' && msg.content.includes('nudge')) return false
+      if (msg.role === 'user' && msg.content.includes('You have placed 0 pieces')) return false
+      if (msg.role === 'user' && msg.content.includes('The current scene only has')) return false
+      if (msg.role === 'user' && msg.content.includes('You MUST output a valid list')) return false
+      if (msg.role === 'user' && msg.content.includes('You have not placed any new pieces')) return false
+      return true
+    })
 
     const isBuildRequest = /\b(build|house|make|create|build a|small house|boat)\b/i.test(userMessage)
     let finalResponse = ''
@@ -516,7 +533,7 @@ export default function BlockyPanel() {
           },
           body: JSON.stringify({
             model,
-            messages: chatMessages,
+            messages: filteredChatMessages, // Send the clean, pruned conversation payload
             tools: AVAILABLE_TOOLS,
             stream: true, // Enable streaming to capture live content/reasoning tokens
             temperature: 0.1,
@@ -713,9 +730,9 @@ export default function BlockyPanel() {
 
           if (!isBuildRequest || currentCount >= 10 || claimsDone || turns >= 13) {
             // Safety: if we have zero pieces placed, do NOT break or declare done. Keep going! (L3D-032)
-            if (isBuildRequest && currentCount === 0 && turns < 13) {
+            if (isBuildRequest && currentCount === 0 && !claimsDone && turns < 13) {
               chatMessages.push(assistantMsg || { role: 'assistant', content: '' })
-              const nudge = `You have placed 0 pieces! You MUST output a valid list of place_piece tool calls to build the requested item.`
+              const nudge = `You have placed 0 pieces! You MUST output a valid list of place_piece tool calls to build the requested item. Do NOT spend your turns explaining or overthinking coordinate rotations or board setups. Immediately output your planned place_piece calls in your very first response turn.`
               chatMessages.push({ role: 'user', content: nudge })
               runLog.push(`Model attempted to stop with 0 pieces. Continuing loop.`)
               setAgentAction('continuing build...')
@@ -723,8 +740,9 @@ export default function BlockyPanel() {
             }
             // Safety 2: if this is a follow-up or continuous build request (e.g. "now add...", "continue...", "build more..."), 
             // the count of pieces might already be > 10. We must check if the agent actually placed NEW pieces this session. (L3D-033)
+            // But only enforce this nudge if the model has NOT naturally claimed to be "done" or completed the task, to prevent runaway continuation loops.
             const newPiecesPlacedThisSession = workingMessages.filter(m => m.role === 'tool' && m.content.includes('🧱')).length
-            if (isBuildRequest && newPiecesPlacedThisSession === 0 && turns < 13) {
+            if (isBuildRequest && newPiecesPlacedThisSession === 0 && !claimsDone && turns < 13) {
               chatMessages.push(assistantMsg || { role: 'assistant', content: '' })
               const nudge = `You have not placed any new pieces in this conversation turn! You must output a valid list of place_piece tool calls to add/modify the current structure.`
               chatMessages.push({ role: 'user', content: nudge })

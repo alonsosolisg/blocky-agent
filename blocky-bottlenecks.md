@@ -28,3 +28,14 @@
   * Set `temperature: 0.1` inside OpenRouter configurations. This clamps model temperature close to determinism, preventing creative pauses, erratic token branching, and long latency.
   * Added a strict rule to the prompt: *"Be extremely brief and concise in your thinking. Do NOT spend tokens repeatedly overanalyzing different construction alternatives. Think of one simple, solid layout and output all the tool calls at once in your very first turn."*
   * Added a safety limit of `max_tokens: 1500` to prevent runaway generation wait times.
+
+## Bottleneck 6: Over-Engineering Multi-Piece Setup Layouts on Turn 1
+* **Issue:** When tasked with complex, multi-piece abstract builds (like a desktop PC computer setup with tower + monitor + keyboard + mouse), the model suffered from **choice paralysis**. It over-engineered details (e.g., trying to figure out rotation offsets and micro-placements of individual 1-stud key caps or thin vertical screen bezels) before outputting any blocks, hitting zero-piece safety limits and aborting.
+* **Resolution:**
+  * Introduced the **Sub-Assembly Approach** to the system guidelines: *"When building complex multi-piece setups (like a Computer PC setup), do NOT attempt to over-engineer complex thin vertical panels or micro-detailing on Turn 1. Build the massive components in clean, simple chunks (e.g., stack `brick-2x4` for a CPU tower, place `plate-2x4` flatly as a monitor/keyboard base, and stack standard blocks in simple layout steps).”*
+  * Encourages the model to place a high-level layout outline on Turn 1, then progressively refine it on subsequent turns, keeping execution snappy and collision-free.
+
+## Bottleneck 7: Runaway Continuation Nudge Loops on Natural Completeness
+* **Issue:** In cases where the model naturally completed a simple requested structure and declared *"Done!"* (or when you asked to *"revert"* the previous steps), our safety filters noticed that `0` new blocks were placed, and **wrongly nudged it to continue building**. This trapped the agent in a runaway continuation loop, forcing it to keep fabricating blocks endlessly after the task was already finished.
+* **Resolution:**
+  * Modified the safety filters in `BlockyPanel.tsx` to detect natural model claims. If the model explicitly claims to be complete (`claimsDone` evaluated to `true`), the safety-net is bypassed. The loop cleanly breaks, commits the state, and ends the session.
