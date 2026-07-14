@@ -1,0 +1,334 @@
+{
+  "meta": {
+    "project": "3d-builder",
+    "version": "0.1.0",
+    "lastUpdated": "2026-07-13T22:20:00Z",
+    "columns": [
+      "backlog",
+      "todo",
+      "in-progress",
+      "review"
+    ],
+    "description": "Active tasks only. Completed work has been moved to kanban-archive.json to keep this board focused and useful. Keyboard-primary 3D Lego-style builder (god POV, procedural bricks, joyful nostalgic aesthetic)."
+  },
+  "tasks": [
+    {
+      "id": "L3D-019",
+      "title": "Full rich PiecePalette React component (search + keyboard nav)",
+      "description": "Filterable grid or list. Arrow keys navigate. Enter places. Visual mini previews.",
+      "column": "done",
+      "priority": "high",
+      "estimate": "35m",
+      "dependsOn": [
+        "L3D-009",
+        "L3D-018"
+      ],
+      "tags": [
+        "ui",
+        "ux"
+      ]
+    },
+    {
+      "id": "L3D-020",
+      "title": "Inspector panel for selected piece (live edit)",
+      "description": "Show position/rotation/color. Allow numeric nudge + color change that mutates store.",
+      "column": "todo",
+      "priority": "medium",
+      "estimate": "20m",
+      "dependsOn": [
+        "L3D-017"
+      ],
+      "tags": [
+        "ui"
+      ]
+    },
+    {
+      "id": "L3D-025",
+      "title": "Dynamic expandable grid visuals",
+      "description": "Grid grows visually or uses infinite + distance fade. Allow placement far out.",
+      "references": [
+        "drei Grid docs + three LineSegments examples"
+      ],
+      "column": "todo",
+      "priority": "medium",
+      "estimate": "15m",
+      "dependsOn": [
+        "L3D-006"
+      ],
+      "tags": [
+        "world",
+        "visuals"
+      ]
+    },
+    {
+      "id": "L3D-026",
+      "title": "View presets + ortho toggle (1=Top, 2=Front etc.)",
+      "description": "Keyboard sets camera position + target + projection (perspective/ortho).",
+      "references": [
+        "https://threejs.org/docs/#api/en/cameras/OrthographicCamera"
+      ],
+      "column": "todo",
+      "priority": "medium",
+      "estimate": "20m",
+      "dependsOn": [
+        "L3D-006"
+      ],
+      "tags": [
+        "camera",
+        "ux"
+      ]
+    },
+    {
+      "id": "L3D-029",
+      "title": "Complete keyboard reference overlay (H key)",
+      "description": "Comprehensive, accurate, categorized help. Update as features land.",
+      "column": "todo",
+      "priority": "medium",
+      "estimate": "15m",
+      "dependsOn": [
+        "L3D-013"
+      ],
+      "tags": [
+        "ux",
+        "docs"
+      ]
+    },
+    {
+      "id": "L3D-030",
+      "title": "Performance pass: instancing + frustum culling + profiling",
+      "description": "Target 60 fps with 2000+ bricks. Add simple Stats or custom FPS. Document quality settings.",
+      "references": [
+        "https://threejs.org/docs/#api/en/objects/InstancedMesh",
+        "three.js performance recommendations"
+      ],
+      "column": "todo",
+      "priority": "high",
+      "estimate": "30m",
+      "dependsOn": [
+        "L3D-016"
+      ],
+      "tags": [
+        "perf"
+      ]
+    },
+    {
+      "id": "L3D-031",
+      "title": "JSON import + basic validation on load",
+      "description": "Allow pasting or file upload of previous saves. Sanitize data.",
+      "column": "todo",
+      "priority": "medium",
+      "estimate": "15m",
+      "dependsOn": [
+        "L3D-021"
+      ],
+      "tags": [
+        "persistence"
+      ]
+    },
+    {
+      "id": "L3D-032",
+      "title": "README with full keyboard cheatsheet + quick start",
+      "description": "Excellent onboarding. Screenshots or GIFs of building flow.",
+      "references": [
+        "Sibling grok-3d-interface README style"
+      ],
+      "column": "todo",
+      "priority": "high",
+      "estimate": "20m",
+      "dependsOn": [
+        "L3D-029"
+      ],
+      "tags": [
+        "docs"
+      ]
+    },
+    {
+      "id": "L3D-033",
+      "title": "Create detailed kanban.json from this plan (living artifact)",
+      "description": "Seed 50-80 granular tasks with references. Keep updated during execution.",
+      "column": "in-progress",
+      "priority": "critical",
+      "estimate": "45m",
+      "dependsOn": [
+        "L3D-001"
+      ],
+      "tags": [
+        "meta",
+        "docs"
+      ],
+      "files": [
+        "kanban.json"
+      ]
+    },
+    {
+      "id": "L3D-034",
+      "title": "LDraw research + prototype loader (hybrid path)",
+      "description": "Study https://github.com/LasseD/buildinginstructions.js . Add docs/ task + optional loader toggle for common parts.",
+      "references": [
+        "http://www.ldraw.org/",
+        "https://github.com/LasseD/buildinginstructions.js",
+        "LDraw file format spec"
+      ],
+      "column": "backlog",
+      "priority": "medium",
+      "estimate": "2h",
+      "dependsOn": [
+        "L3D-024"
+      ],
+      "tags": [
+        "ldraw",
+        "advanced",
+        "research"
+      ]
+    },
+    {
+      "id": "L3D-035",
+      "title": "Add more piece types (minifig head/torso as special, baseplates)",
+      "description": "Extend catalog and geometry. Treat tall/special pieces correctly for height/footprint.",
+      "column": "backlog",
+      "priority": "medium",
+      "estimate": "40m",
+      "dependsOn": [
+        "L3D-024"
+      ],
+      "tags": [
+        "pieces"
+      ]
+    },
+    {
+      "id": "L3D-036",
+      "title": "Build 3-4 showcase example models in code or as loadable JSON",
+      "description": "Ship with nice demo worlds (castle wall section, small vehicle, tower).",
+      "column": "backlog",
+      "priority": "medium",
+      "estimate": "30m",
+      "dependsOn": [
+        "L3D-021"
+      ],
+      "tags": [
+        "demo",
+        "polish"
+      ]
+    },
+    {
+      "id": "L3D-037",
+      "title": "Final verification: full keyboard building session + export + reload",
+      "description": "Build recognizable structure using only keyboard. Save, reload, export GLB, verify in external viewer. 60fps @ 1000 pieces.",
+      "column": "backlog",
+      "priority": "critical",
+      "estimate": "45m",
+      "dependsOn": [
+        "L3D-030",
+        "L3D-022",
+        "L3D-023"
+      ],
+      "tags": [
+        "verification",
+        "completion"
+      ]
+    },
+    {
+      "id": "L3D-038",
+      "title": "Polish: accessibility (focus, aria, key hints)",
+      "description": "Ensure all panels keyboard navigable. Good focus states.",
+      "column": "backlog",
+      "priority": "low",
+      "estimate": "15m",
+      "dependsOn": [
+        "L3D-019",
+        "L3D-028"
+      ],
+      "tags": [
+        "polish",
+        "a11y"
+      ]
+    },
+    {
+      "id": "L3D-039",
+      "title": "Implement game-like Web Audio sound system",
+      "description": "Create src/lib/audio.ts. Satisfying plastic 'clack' on place (short noise burst + pitched tone with envelope), soft pick on select/cursor move, delete pop. Slight random variation for natural feel. Trigger from placement logic and UI interactions. Keep tasteful and not overwhelming.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/AudioContext",
+        "Web Audio API noise + filter techniques for click sounds",
+        "Classic video game 'lego clack' sound design references"
+      ],
+      "column": "backlog",
+      "priority": "medium",
+      "estimate": "30m",
+      "dependsOn": [
+        "L3D-015"
+      ],
+      "tags": [
+        "audio",
+        "game-like",
+        "polish"
+      ]
+    },
+    {
+      "id": "L3D-040",
+      "title": "Nostalgic joyful UI redesign (non-generic, LEGO game aesthetic)",
+      "description": "Redesign all panels, palette, color picker, status from current dark pro to tasteful joyful nostalgic look: light creamy/soft gray panels, rounded 'tray' style, prominent use of real LEGO color names and swatches. Piece buttons that feel like physical bricks. Avoid generic modern flat/minimal. Inspired by LEGO Digital Designer UI + cheerful early LEGO PC game interfaces. Bright but balanced, not saturating.",
+      "references": [
+        "LEGO Digital Designer screenshots and UI patterns",
+        "Classic LEGO Creator / LEGO Island game UI aesthetics",
+        "Official LEGO color palette references (BrickLink color guide)"
+      ],
+      "column": "backlog",
+      "priority": "high",
+      "estimate": "45m",
+      "dependsOn": [
+        "L3D-004",
+        "L3D-019"
+      ],
+      "tags": [
+        "ui",
+        "aesthetic",
+        "game-like"
+      ]
+    },
+    {
+      "id": "L3D-041",
+      "title": "Game-like placement & interaction feedback (animations + feel)",
+      "description": "Add subtle joyful feedback while keeping builder focus: scale/pop or slight bounce animation when placing a brick, ghost piece that feels 'held', nice highlight on valid placement, cursor that communicates current piece. Combine with sound (L3D-039). Make the builder feel alive and satisfying like the best LEGO digital experiences.",
+      "references": [
+        "three.js + R3F animation patterns (useFrame or react-spring)",
+        "LEGO game placement feedback examples"
+      ],
+      "column": "backlog",
+      "priority": "medium",
+      "estimate": "30m",
+      "dependsOn": [
+        "L3D-015",
+        "L3D-039"
+      ],
+      "tags": [
+        "game-like",
+        "visuals",
+        "ux"
+      ]
+    },
+    {
+      "id": "L3D-042",
+      "title": "Curated joyful tasteful color palette + material integration",
+      "description": "Define and use a beautiful, non-saturating LEGO-inspired palette (20-30 colors) with official-ish names. Wire into materials so bricks look premium and joyful in the new lighting. Update swatches and defaults.",
+      "references": [
+        "https://www.bricklink.com/v2/main.page (color guide)",
+        "LEGO color palette community lists"
+      ],
+      "column": "backlog",
+      "priority": "high",
+      "estimate": "20m",
+      "dependsOn": [
+        "L3D-018",
+        "L3D-027",
+        "L3D-040"
+      ],
+      "tags": [
+        "visuals",
+        "aesthetic",
+        "pieces"
+      ]
+    }
+  ]
+}

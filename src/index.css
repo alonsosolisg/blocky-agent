@@ -1,0 +1,408 @@
+/* =====================================================
+   3D BUILDER — Joyful Nostalgic LEGO Aesthetic
+   Tasteful, colorful but not saturating. Pristine plastic feel.
+   Inspired by classic LEGO Digital Designer + early LEGO games.
+   Keyboard-first builder, game-like feedback.
+   ===================================================== */
+
+@import "tailwindcss";
+
+/* Nostalgic LEGO-inspired joyful but tasteful palette */
+:root {
+  /* Light, cheerful base (classic LDD / LEGO software feel) */
+  --bg: #f2ede3;               /* warm cream / light studio */
+  --viewport-bg: #d6e0eb;      /* soft sky-blue-gray for 3D area */
+  --panel: #f8f4eb;
+  --panel-border: #c9c2b3;
+  --text: #2c2a25;
+  --text-muted: #5f5a50;
+  --accent: #c91a09;           /* true classic LEGO red */
+  --accent-2: #f2c832;         /* LEGO yellow */
+  --accent-3: #0055a4;         /* LEGO blue */
+  --success: #2e8b3e;
+  --danger: #b33a2e;
+  --grid: #b8b2a3;
+
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow: hidden;
+}
+
+body {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Fullscreen layout */
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Side panels — "tray" nostalgic style (now minimal: only left card) */
+.panel {
+  position: fixed;
+  background: var(--panel);
+  border: 2px solid var(--panel-border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 90;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.panel.left {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  width: 218px;
+  height: auto;
+  max-height: 58vh;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18), 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  /* Floating card — does not reserve space, overlays the 3D */
+  z-index: 95;
+}
+
+/* Blocky right panel */
+.blocky-panel {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  width: 320px;
+  height: 420px;
+  max-height: 70vh;
+  background: var(--panel);
+  border: 2px solid var(--panel-border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  z-index: 95;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18), 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.blocky-panel .panel-header {
+  padding: 4px 10px;
+  font-weight: 700;
+  font-size: 11px;
+  background: linear-gradient(to bottom, #f1ebdf, #e9e2d3);
+  border-bottom: 1px solid var(--panel-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+
+.blocky-panel .header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.blocky-panel .header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.blocky-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #f8f4eb;
+}
+
+.blocky-messages .msg {
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.3;
+  max-width: 92%;
+}
+
+.blocky-messages .msg.user {
+  align-self: flex-end;
+  background: #e8d9c0;
+  border: 1px solid #c9c2b3;
+}
+
+.blocky-messages .msg.assistant {
+  align-self: flex-start;
+  background: white;
+  border: 1px solid #d4c9b3;
+}
+
+.blocky-messages .msg.tool {
+  align-self: flex-start;
+  font-size: 10.5px;
+  background: #f0e9d9;
+  border: 1px solid #c9c2b3;
+  color: #5f5a50;
+}
+
+.blocky-messages .tool-label {
+  font-weight: 600;
+  font-size: 9px;
+  margin-bottom: 1px;
+  color: #237841;
+  opacity: 0.85;
+}
+
+.blocky-messages .msg.thinking {
+  font-style: italic;
+  opacity: 0.75;
+  background: #f8f4eb;
+  border: 1px dashed #c9c2b3;
+}
+
+.blocky-messages .msg.assistant {
+  border-left: 3px solid #c91a09;
+}
+
+.blocky-messages .msg.assistant.thinking {
+  font-style: italic;
+  color: #5f5a50;
+}
+
+.blocky-messages .debug-raw {
+  background: #0f172a;
+  color: #e0f2fe;
+  border: 1px solid #334155;
+  font-size: 9.5px;
+  line-height: 1.25;
+  max-height: 280px;
+  overflow: auto;
+  user-select: all; /* makes selecting the whole block easier */
+}
+
+/* Nice custom select for model picker */
+.blocky-panel select {
+  font-family: inherit;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.blocky-panel select:hover {
+  border-color: #a37b6b;
+}
+
+.blocky-input {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  border-top: 1px solid var(--panel-border);
+  background: #f8f4eb;
+}
+
+.blocky-input input {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 12px;
+  border: 1px solid #c9c2b3;
+  border-radius: 4px;
+  background: white;
+}
+
+.blocky-input button {
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid #c9c2b3;
+  background: #e8e1d2;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.blocky-input button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Right panel removed for cleaner UI */
+.panel.right {
+  display: none;
+}
+
+.panel-header {
+  padding: 5px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  background: linear-gradient(to bottom, #f1ebdf, #e9e2d3);
+  border-bottom: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-header.mini {
+  padding: 4px 7px;
+  font-size: 8.5px;
+  letter-spacing: 0.6px;
+}
+
+.panel-body {
+  flex: 1;
+  overflow: auto;
+  padding: 6px;
+}
+
+.panel-body.compact {
+  padding: 5px 6px;
+}
+
+/* Piece grid — compact floating tray */
+.piece-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.piece-btn {
+  aspect-ratio: 1 / 1;
+  background: #e8e1d2;
+  border: 1.5px solid #c9c2b3;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7.5px;
+  color: #3a3730;
+  cursor: pointer;
+  transition: transform 0.06s ease, border-color 0.1s, box-shadow 0.1s;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 1px 2px rgba(0,0,0,0.12);
+  padding: 3px;
+}
+
+.piece-btn:hover {
+  border-color: #a37b6b;
+  transform: translateY(-0.5px);
+}
+
+.piece-btn.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2.5px rgba(201, 26, 9, 0.22), inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+.piece-btn.highlighted {
+  outline: 2px solid #a37b6b;
+  outline-offset: -2px;
+  background: #f0e9d9;
+}
+
+/* Actual brick-shaped preview that looks like a real Lego piece */
+.lego-mini {
+  position: relative;
+  border-radius: 2.5px;
+  box-shadow: 
+    inset 0 2.5px 3.5px rgba(255,255,255,0.6),
+    inset 0 -2.5px 3px rgba(0,0,0,0.4),
+    0 1px 2px rgba(0,0,0,0.2);
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  flex-shrink: 0;
+}
+
+/* Tiles have a smooth flat top (no studs) */
+.lego-mini.tile {
+  box-shadow: 
+    inset 0 2px 2px rgba(255,255,255,0.45),
+    inset 0 -2px 2.5px rgba(0,0,0,0.3);
+  border: 1px solid rgba(0, 0, 0, 0.22);
+}
+
+/* Proper 3D-looking studs on the mini previews (match real brick top) */
+.stud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 50%;
+  box-shadow: 
+    inset 0 1.2px 1.8px rgba(255,255,255,0.98),
+    inset 0 -1px 1px rgba(0,0,0,0.3),
+    0 0 1px rgba(0,0,0,0.35);
+  pointer-events: none;
+}
+
+.key-hint {
+  opacity: 0.65;
+}
+
+.help-hint {
+  font-size: 9px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 0.6;
+  background: rgba(0,0,0,0.04);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* Rich palette search */
+.panel .panel-body input {
+  font-family: var(--sans);
+  font-size: 11px;
+}
+
+/* Canvas area — full viewport. Left and right panels are floating overlays on top. */
+.canvas-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--viewport-bg);
+}
+
+/* Help overlay — softer */
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(40, 38, 32, 0.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  font-size: 13px;
+}
+
+.help-overlay.visible {
+  display: flex;
+}
+
+.help-content {
+  background: var(--panel);
+  border: 2px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 26px 28px;
+  max-width: 640px;
+  width: 92%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+kbd {
+  font-family: var(--mono);
+  background: #e8e1d2;
+  padding: 1px 7px;
+  border-radius: 3px;
+  border: 1px solid #c9c2b3;
+  font-size: 11px;
+}
+
+/* Validity */
+.valid { color: var(--success); }
+.invalid { color: var(--danger); }

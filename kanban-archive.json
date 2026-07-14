@@ -1,0 +1,497 @@
+{
+  "meta": {
+    "project": "3d-builder",
+    "version": "0.1.0",
+    "lastUpdated": "2026-07-13T21:54:17.563Z",
+    "columns": ["done"],
+    "description": "ARCHIVE: All completed tasks from the 3d-builder project. Moved out of main kanban.json to keep the active board focused and useful.",
+    "archiveOf": "kanban.json",
+    "archivedAt": "2026-07-13"
+  },
+  "tasks": [
+    {
+      "id": "L3D-001",
+      "title": "Initialize Vite + React + TypeScript project",
+      "description": "Use `npm create vite@latest . -- --template react-ts --yes`. Configure strict TS, HMR, and prepare for three.js + R3F imports.",
+      "references": [
+        "https://vitejs.dev/guide/",
+        "https://react.dev/"
+      ],
+      "column": "done",
+      "priority": "critical",
+      "estimate": "5m",
+      "dependsOn": [],
+      "tags": [
+        "setup",
+        "infra"
+      ],
+      "acceptance": [
+        "`npm run dev` works cleanly",
+        "TypeScript 6 + React 19 + strict config"
+      ],
+      "files": [
+        "package.json",
+        "vite.config.ts",
+        "tsconfig*.json",
+        "index.html"
+      ]
+    },
+    {
+      "id": "L3D-002",
+      "title": "Install core dependencies (three + R3F + state + UI)",
+      "description": "three, @react-three/fiber, @react-three/drei, zustand, lucide-react, @types/three, tailwindcss + postcss/autoprefixer. Prepare for pro quality declarative 3D + React UI.",
+      "references": [
+        "https://docs.pmnd.rs/react-three-fiber/getting-started/introduction",
+        "https://drei.docs.pmnd.rs/",
+        "https://docs.pmnd.rs/zustand/getting-started/introduction",
+        "https://tailwindcss.com/docs/installation"
+      ],
+      "column": "done",
+      "priority": "critical",
+      "estimate": "8m",
+      "dependsOn": [
+        "L3D-001"
+      ],
+      "tags": [
+        "setup",
+        "deps"
+      ],
+      "acceptance": [
+        "All packages install without errors",
+        "Can import { Canvas } from '@react-three/fiber' and <OrbitControls />"
+      ]
+    },
+    {
+      "id": "L3D-003",
+      "title": "Setup Tailwind v4 + clean dark pro theme",
+      "description": "Add @import \"tailwindcss\"; Create Lego-inspired palette (red #e30613, yellow, blue). Fullscreen layout, panels, HUD.",
+      "references": [
+        "https://tailwindcss.com/docs/installation/using-postcss",
+        "Tailwind v4 release notes"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "15m",
+      "dependsOn": [
+        "L3D-002"
+      ],
+      "tags": [
+        "ui",
+        "styling"
+      ],
+      "files": [
+        "src/index.css",
+        "tailwind.config.ts"
+      ]
+    },
+    {
+      "id": "L3D-004",
+      "title": "Create basic fullscreen layout + stub panels",
+      "description": "Topbar, left palette stub, right inspector stub, bottom statusbar, help overlay. All keyboard accessible.",
+      "references": [
+        "Sibling grok-3d-interface HUD patterns"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "20m",
+      "dependsOn": [
+        "L3D-003"
+      ],
+      "tags": [
+        "ui",
+        "layout"
+      ],
+      "files": [
+        "src/App.tsx"
+      ]
+    },
+    {
+      "id": "L3D-005",
+      "title": "Add @react-three/fiber Canvas + basic scene",
+      "description": "Integrate <Canvas>, camera, lights (ambient + directional), basic ground. Target 60fps.",
+      "references": [
+        "https://docs.pmnd.rs/react-three-fiber/getting-started/introduction",
+        "https://threejs.org/docs/#api/en/lights/AmbientLight",
+        "https://threejs.org/docs/#api/en/lights/DirectionalLight"
+      ],
+      "column": "done",
+      "priority": "critical",
+      "estimate": "15m",
+      "dependsOn": [
+        "L3D-004"
+      ],
+      "tags": [
+        "3d",
+        "core"
+      ],
+      "acceptance": [
+        "Canvas renders without errors",
+        "Clean dark background + visible lighting"
+      ]
+    },
+    {
+      "id": "L3D-006",
+      "title": "Add OrbitControls + high-quality Grid from drei",
+      "description": "Use <OrbitControls enableDamping ... /> and <Grid infiniteGrid cellSize={1} />. God POV ready.",
+      "references": [
+        "https://drei.docs.pmnd.rs/controls/orbit-controls",
+        "https://drei.docs.pmnd.rs/staging/grid"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "12m",
+      "dependsOn": [
+        "L3D-005"
+      ],
+      "tags": [
+        "controls",
+        "camera"
+      ],
+      "acceptance": [
+        "Smooth orbit + zoom + pan with mouse",
+        "Visible 1-stud grid matching Lego scale"
+      ]
+    },
+    {
+      "id": "L3D-007",
+      "title": "Define TypeScript types: PartDef, PlacedPiece, CursorState",
+      "description": "Create src/types.ts with strict interfaces for the entire model.",
+      "references": [
+        "TypeScript handbook - Interfaces"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "10m",
+      "dependsOn": [
+        "L3D-002"
+      ],
+      "tags": [
+        "types",
+        "core"
+      ]
+    },
+    {
+      "id": "L3D-008",
+      "title": "Create zustand store (pieces, cursor, history, selection)",
+      "description": "Single source of truth. Include basic undo stack (array of snapshots).",
+      "references": [
+        "https://docs.pmnd.rs/zustand/guides/immer-middleware",
+        "https://docs.pmnd.rs/zustand/guides/slices-pattern"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "25m",
+      "dependsOn": [
+        "L3D-007"
+      ],
+      "tags": [
+        "state",
+        "core"
+      ],
+      "files": [
+        "src/store/useBuilderStore.ts"
+      ]
+    },
+    {
+      "id": "L3D-009",
+      "title": "Implement piece catalog (20+ core parts)",
+      "description": "src/lib/pieceCatalog.ts with id, name, w, l, h (plates), hasStuds, category. Use real Lego naming.",
+      "references": [
+        "https://www.bricklink.com/v2/main.page",
+        "Lego part dimensions sources"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "30m",
+      "dependsOn": [
+        "L3D-007"
+      ],
+      "tags": [
+        "pieces",
+        "data"
+      ]
+    },
+    {
+      "id": "L3D-010",
+      "title": "Build procedural geometry factory for basic bricks",
+      "description": "createBrickGeometry({w, l, h}): BufferGeometry or Group. Accurate studs using Cylinder + Box with real proportions (stud=1, plateH≈0.4, brick≈1.2).",
+      "references": [
+        "https://threejs.org/docs/#api/en/geometries/BoxGeometry",
+        "https://threejs.org/docs/#api/en/geometries/CylinderGeometry",
+        "https://www.bartneck.de/2019/04/21/lego-brick-dimensions-and-measurements/",
+        "https://grabcad.com/tutorials/lego-01-basic-dimensions-bricks-explained"
+      ],
+      "column": "done",
+      "priority": "critical",
+      "estimate": "50m",
+      "dependsOn": [
+        "L3D-009"
+      ],
+      "tags": [
+        "geometry",
+        "pieces"
+      ],
+      "acceptance": [
+        "Visually convincing 1x1 / 1x2 / 2x4 bricks",
+        "Studs at correct 1.0 spacing"
+      ]
+    },
+    {
+      "id": "L3D-011",
+      "title": "Create reusable <LegoPiece /> R3F component",
+      "description": "Accepts PlacedPiece props. Use memoized geometries per type+color. Support shadows.",
+      "references": [
+        "https://docs.pmnd.rs/react-three-fiber/advanced/pitfalls",
+        "three.js MeshPhongMaterial / MeshStandardMaterial docs"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "20m",
+      "dependsOn": [
+        "L3D-010"
+      ],
+      "tags": [
+        "3d",
+        "pieces"
+      ]
+    },
+    {
+      "id": "L3D-012",
+      "title": "Implement build cursor + snapping math (snapUtils)",
+      "description": "Cursor always on integer studs (X/Z) + discrete plate heights (Y). Functions: snapToGrid, getFootprint, layerToY.",
+      "references": [
+        "https://threejs.org/docs/#api/en/math/Vector3"
+      ],
+      "column": "done",
+      "priority": "critical",
+      "estimate": "35m",
+      "dependsOn": [
+        "L3D-008"
+      ],
+      "tags": [
+        "controls",
+        "core"
+      ]
+    },
+    {
+      "id": "L3D-013",
+      "title": "Keyboard primary controls: cursor movement + layer + rotate",
+      "description": "Central keyboard.ts or hook. Arrow/WASD move, [ ] layer, R rotate. Prevent conflicts with OrbitControls.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent"
+      ],
+      "column": "done",
+      "priority": "critical",
+      "estimate": "30m",
+      "dependsOn": [
+        "L3D-012"
+      ],
+      "tags": [
+        "controls",
+        "ux"
+      ],
+      "acceptance": [
+        "Pure keyboard can move ghost and change layer/rotation smoothly"
+      ]
+    },
+    {
+      "id": "L3D-014",
+      "title": "Placement + validity (collision via stud occupancy)",
+      "description": "Maintain stud-level occupancy map. Prevent overlaps. Show green/red validity on ghost.",
+      "references": [
+        "Spatial hashing patterns (simple Map<string, boolean>)"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "40m",
+      "dependsOn": [
+        "L3D-012",
+        "L3D-013"
+      ],
+      "tags": [
+        "logic",
+        "core"
+      ]
+    },
+    {
+      "id": "L3D-015",
+      "title": "Place / delete actions wired to store",
+      "description": "Space/Enter places current type at cursor. Delete removes under cursor or selected.",
+      "column": "done",
+      "priority": "high",
+      "estimate": "15m",
+      "dependsOn": [
+        "L3D-014"
+      ],
+      "tags": [
+        "core",
+        "ux"
+      ]
+    },
+    {
+      "id": "L3D-016",
+      "title": "Render placed pieces from store using instancing or groups",
+      "description": "Efficient path: group pieces by (type, color) and use <instancedMesh> where possible.",
+      "references": [
+        "https://threejs.org/docs/#api/en/objects/InstancedMesh",
+        "https://docs.pmnd.rs/react-three-fiber/advanced/instancing"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "30m",
+      "dependsOn": [
+        "L3D-011",
+        "L3D-015"
+      ],
+      "tags": [
+        "perf",
+        "3d"
+      ]
+    },
+    {
+      "id": "L3D-017",
+      "title": "Add selection system (click + keyboard S)",
+      "description": "Raycast on click or cursor position. Highlight selected. Inspector shows live data.",
+      "references": [
+        "https://threejs.org/docs/#api/en/core/Raycaster"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "25m",
+      "dependsOn": [
+        "L3D-016"
+      ],
+      "tags": [
+        "interactions",
+        "ux"
+      ]
+    },
+    {
+      "id": "L3D-018",
+      "title": "Color system + authentic Lego palette swatches",
+      "description": "Hardcode ~35-40 colors with names. Keyboard + mouse selectable. Live update on selected or ghost.",
+      "references": [
+        "BrickLink color guide or common community hex lists"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "20m",
+      "dependsOn": [
+        "L3D-009"
+      ],
+      "tags": [
+        "ui",
+        "pieces"
+      ]
+    },
+    {
+      "id": "L3D-021",
+      "title": "LocalStorage autosave + manual Save / Load JSON",
+      "description": "Serialize full state (pieces + camera target + current settings). Validate on load.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "25m",
+      "dependsOn": [
+        "L3D-008",
+        "L3D-015"
+      ],
+      "tags": [
+        "persistence"
+      ]
+    },
+    {
+      "id": "L3D-022",
+      "title": "GLTF export of entire build",
+      "description": "Use GLTFExporter to export current scene or reconstructed group as downloadable .glb.",
+      "references": [
+        "https://threejs.org/docs/#examples/en/exporters/GLTFExporter"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "25m",
+      "dependsOn": [
+        "L3D-016"
+      ],
+      "tags": [
+        "export",
+        "persistence"
+      ]
+    },
+    {
+      "id": "L3D-023",
+      "title": "Undo / Redo stack (deep history)",
+      "description": "Push full pieces snapshots on mutations. Ctrl+Z / Y. Bounded size (e.g. 50).",
+      "column": "done",
+      "priority": "high",
+      "estimate": "20m",
+      "dependsOn": [
+        "L3D-008",
+        "L3D-015"
+      ],
+      "tags": [
+        "state",
+        "ux"
+      ]
+    },
+    {
+      "id": "L3D-024",
+      "title": "Expand catalog: add plates, tiles, slopes, rounds (reach 25+)",
+      "description": "Extend geometry factory + catalog. Test stacking and rotation.",
+      "references": [
+        "Lego part geometry references + previous bartneck article"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "45m",
+      "dependsOn": [
+        "L3D-010"
+      ],
+      "tags": [
+        "pieces",
+        "geometry"
+      ]
+    },
+    {
+      "id": "L3D-027",
+      "title": "Pristine nostalgic LEGO plastic materials + lighting",
+      "description": "Upgrade to high-quality plastic look: MeshPhysicalMaterial (or advanced Phong) with proper roughness, specular, clearcoat-like sheen for ABS plastic. Joyful but tasteful lighting (balanced directional + hemi + soft fill, not dark). Achieve the specific clean, premium look of classic LEGO Digital Designer and early LEGO games. Avoid oversaturated or generic PBR.",
+      "references": [
+        "https://threejs.org/docs/#api/en/materials/MeshPhysicalMaterial",
+        "https://threejs.org/docs/#api/en/materials/MeshPhongMaterial",
+        "three.js plastic / toy material examples",
+        "LEGO Digital Designer rendering style references + classic LEGO game plastic shading"
+      ],
+      "column": "done",
+      "priority": "high",
+      "estimate": "35m",
+      "dependsOn": [
+        "L3D-005",
+        "L3D-011"
+      ],
+      "tags": [
+        "visuals",
+        "polish",
+        "aesthetic"
+      ]
+    },
+    {
+      "id": "L3D-028",
+      "title": "Status bar + live cursor / stats display",
+      "description": "Always show: cursor studs coords, current piece+color, piece count, layer, validity.",
+      "column": "done",
+      "priority": "medium",
+      "estimate": "10m",
+      "dependsOn": [
+        "L3D-004",
+        "L3D-013"
+      ],
+      "tags": [
+        "ui",
+        "ux"
+      ]
+    }
+  ]
+}

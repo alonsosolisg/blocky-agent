@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <!-- Subtle Lego-ish background -->
+  <rect width="24" height="24" rx="4" fill="#f0e9d9"/>
+  <!-- Hard hat (yellow) -->
+  <path d="M3.5 7.5 Q12 2 20.5 7.5" fill="#facc15" stroke="#854d0e" stroke-width="1.2"/>
+  <rect x="2.8" y="6.8" width="18.4" height="2.8" rx="0.8" fill="#facc15" stroke="#854d0e" stroke-width="0.9"/>
+  <!-- Head -->
+  <rect x="5.2" y="9" width="13.6" height="11.2" rx="2" fill="#fde047" stroke="#854d0e" stroke-width="1.3"/>
+  <!-- Eyes -->
+  <circle cx="9.2" cy="13.2" r="1.15" fill="#1e2937"/>
+  <circle cx="14.8" cy="13.2" r="1.15" fill="#1e2937"/>
+  <!-- Mouth -->
+  <path d="M8.7 16.2 Q12 17.6 15.3 16.2" stroke="#1e2937" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+</svg>
